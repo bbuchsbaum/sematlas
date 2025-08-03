@@ -1,0 +1,39 @@
+# Core Dependencies for Generative Brain Atlas Project
+# Install with: pip install -r requirements.txt
+
+# Deep Learning
+torch>=1.12.0
+pytorch-lightning>=1.6.0
+torchvision>=0.13.0
+
+# Neuroimaging
+nimare>=0.0.14
+nibabel>=4.0.0
+nilearn>=0.9.0
+
+# Data Science
+numpy>=1.21.0
+pandas>=1.4.0
+scipy>=1.8.0
+scikit-learn>=1.1.0
+
+# Visualization
+matplotlib>=3.5.0
+plotly>=5.8.0
+streamlit>=1.10.0
+ipywidgets
+
+# Storage & Performance
+lmdb>=1.3.0
+h5py>=3.7.0
+dvc>=2.10.0
+
+# Monitoring
+wandb>=0.12.0
+
+# Development
+pytest
+black
+isort
+flake8
+mypy
