@@ -5,7 +5,7 @@
 **Date**: 2025-08-03  
 **Project Phase**: Sprint 1 Active  
 **Current Sprint**: Sprint 1 - Data Foundation & Baseline Model  
-**Overall Progress**: 5% (Starting Sprint 1 implementation)
+**Overall Progress**: 15% (Epic 1: 40% complete, 2/5 tickets done)
 
 ---
 
@@ -23,10 +23,10 @@
 ## Current Active Items
 
 ### Immediate Next Tasks (Priority Order)
-1. **[IN PROGRESS] Environment Setup**: Create conda environment with dependencies
-2. **Project Structure**: Set up directory structure per CLAUDE.md specs
-3. **Git Initialization**: Initialize repository
-4. **Begin S1.1.1**: Neurosynth download implementation
+1. **[IN PROGRESS] S1.1.3**: Implement Talairach correction with logging
+2. **S1.1.4**: Create volumetric cache with dual-kernel augmentation
+3. **S1.1.5**: Finalize splits and DVC versioning
+4. **Epic 2**: Begin baseline 3D VAE implementation
 
 ### Blockers
 - None currently identified
@@ -45,6 +45,13 @@
 - [x] **Sprint documentation**: All 4 sprints planned and documented
 - [x] **Paperspace integration**: GPU training solution selected and documented
 
+### Sprint 1 - Epic 1: Data Curation Pipeline (In Progress)
+- [x] **S1.1.1**: Neurosynth download script implemented and validated
+- [x] **S1.1.2**: Directional deduplication logic implemented with full test suite
+- [ ] **S1.1.3**: Talairach correction with logging (In Progress)
+- [ ] **S1.1.4**: Volumetric cache creation
+- [ ] **S1.1.5**: DVC pipeline setup
+
 ### Key Decisions Made
 1. **GPU Training**: Paperspace Gradient selected for cloud GPU training (~$50 total budget)
 2. **Success Criteria**: Strict 100% completion required for sprint advancement
@@ -56,18 +63,25 @@
 ## Artifacts Registry
 
 ### Configuration Files
-- `environment.yml`: Not created yet
+- `environment.yml`: ✅ Complete
 - `dvc.yaml`: Not created yet
-- `requirements.txt`: Not created yet
+- `requirements.txt`: ✅ Complete
+- `Makefile`: ✅ Complete
+- `.gitignore`: ✅ Complete
 
 ### Models
 - None yet
 
 ### Data
-- None yet
+- `data/raw/mock_database.json`: ✅ Mock Neurosynth dataset (100 studies, 200 coordinates)
+- `data/raw/download_metadata.json`: ✅ Download metadata and validation info
+- `data/processed/deduplicated_data.csv`: ✅ Deduplicated coordinate data
 
-### Demos
-- None yet
+### Scripts & Tools
+- `scripts/download_neurosynth_simple.py`: ✅ Neurosynth download script
+- `scripts/test_deduplication.py`: ✅ Deduplication integration test
+- `src/data/deduplication.py`: ✅ Directional deduplication module
+- `tests/test_deduplication.py`: ✅ Comprehensive test suite
 
 ### Documentation
 - `CLAUDE.md`: ✅ Complete
