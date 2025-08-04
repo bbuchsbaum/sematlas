@@ -346,11 +346,15 @@ def main():
     # Setup data
     logger.info("Setting up data module...")
     datamodule = BrainVolumeDataModule(
-        data_dir=args.data_dir,
-        lmdb_cache="data/processed/volumetric_cache.lmdb",
+        train_split=f"{args.data_dir}/train_split.csv",
+        val_split=f"{args.data_dir}/val_split.csv",
+        test_split=f"{args.data_dir}/test_split.csv",
+        volumetric_cache_path=args.cache_path,
         batch_size=4,
         num_workers=0,
-        include_metadata=False  # Disable metadata for baseline validation
+        include_metadata=False,  # Disable metadata for baseline validation
+        kernel_selection="random",
+        pin_memory=False
     )
     datamodule.setup('fit')
     
