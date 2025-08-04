@@ -41,9 +41,24 @@ def setup_logging() -> logging.Logger:
 
 def load_model(checkpoint_path: Optional[str] = None) -> ResNetVAE3D:
     """Load trained or untrained model."""
+    # Default latent dim (may be overridden if loading checkpoint)
+    latent_dim = 128
+    
+    # If checkpoint provided, check its latent dimension first
+    if checkpoint_path and Path(checkpoint_path).exists():
+        checkpoint = torch.load(checkpoint_path, map_location='cpu')
+        
+        # Try to infer latent_dim from checkpoint
+        state_dict = checkpoint.get('state_dict', checkpoint)
+        for key, value in state_dict.items():
+            if 'fc_mu.weight' in key:
+                latent_dim = value.shape[0]
+                logging.info(f"Detected latent_dim={latent_dim} from checkpoint")
+                break
+    
     model = ResNetVAE3D(
         input_channels=1,
-        latent_dim=128,
+        latent_dim=latent_dim,
         groups=8
     )
     
