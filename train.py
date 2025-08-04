@@ -286,10 +286,12 @@ def main():
             
         logger.info("Training completed successfully!")
         
-        # Test the model
-        if config.get('data', {}).get('test_split'):
+        # Test the model (only if test_step is implemented)
+        if config.get('data', {}).get('test_split') and hasattr(model, 'test_step'):
             logger.info("Running final test evaluation...")
             trainer.test(model, datamodule)
+        else:
+            logger.info("Training complete! Skipping test phase (test_step not implemented)")
         
     except Exception as e:
         logger.error(f"Training failed: {e}")
