@@ -323,10 +323,14 @@ def main():
     parser.add_argument('--untrained', action='store_true', help='Test with untrained model')
     parser.add_argument('--data-dir', type=str, default='data/processed',
                         help='Path to processed data directory')
+    parser.add_argument('--cache-path', type=str, default='data/processed/volumetric_cache_lmdb',
+                        help='Path to LMDB cache')
     parser.add_argument('--output-dir', type=str, default='validation_outputs',
                         help='Directory for validation outputs')
     parser.add_argument('--num-samples', type=int, default=10,
                         help='Number of samples for validation')
+    parser.add_argument('--batch-size', type=int, default=4,
+                        help='Batch size for validation')
     
     args = parser.parse_args()
     logger = setup_logging()
@@ -350,7 +354,7 @@ def main():
         val_split=f"{args.data_dir}/val_split.csv",
         test_split=f"{args.data_dir}/test_split.csv",
         volumetric_cache_path=args.cache_path,
-        batch_size=4,
+        batch_size=args.batch_size,
         num_workers=0,
         include_metadata=False,  # Disable metadata for baseline validation
         kernel_selection="random",
