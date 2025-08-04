@@ -1,0 +1,60 @@
+{
+  "creation_timestamp": "2025-08-03T10:51:40.404762",
+  "source_data": "data/processed/coordinate_corrected_data.csv",
+  "split_parameters": {
+    "split_ratios": [
+      0.7,
+      0.15,
+      0.15
+    ],
+    "random_seed": 42,
+    "stratification": "by_study"
+  },
+  "analysis": {
+    "split_sizes": {
+      "train": {
+        "studies": 700,
+        "coordinates": 23596
+      },
+      "val": {
+        "studies": 150,
+        "coordinates": 5532
+      },
+      "test": {
+        "studies": 150,
+        "coordinates": 5666
+      }
+    },
+    "split_ratios": {
+      "train_studies": 0.7,
+      "val_studies": 0.15,
+      "test_studies": 0.15,
+      "train_coords": 0.6781629016497097,
+      "val_coords": 0.15899292981548543,
+      "test_coords": 0.16284416853480485
+    },
+    "coordinate_statistics": {
+      "train": {
+        "mean_coords_per_study": 33.70857142857143,
+        "stat_value_range": [
+          -9.736600816098695,
+          9.118068841963742
+        ]
+      },
+      "val": {
+        "mean_coords_per_study": 36.88,
+        "stat_value_range": [
+          -8.041890782377598,
+          8.502902284712217
+        ]
+      },
+      "test": {
+        "mean_coords_per_study": 37.77333333333333,
+        "stat_value_range": [
+          -9.089211912528455,
+          9.09175001714478
+        ]
+      }
+    }
+  }
+}

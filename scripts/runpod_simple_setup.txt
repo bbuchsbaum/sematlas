@@ -1,0 +1,41 @@
+# RunPod Setup Instructions
+# =========================
+
+Since SSH has limitations, use the RunPod Web Terminal:
+
+1. Go to https://www.runpod.io/console/pods
+2. Click on your pod (y8rgiwnfy0kpua)
+3. Click "Connect" -> "Connect via Browser" (Web Terminal)
+
+4. In the web terminal, run these commands:
+
+# Setup workspace
+cd /workspace
+mkdir -p sematlas
+cd sematlas
+
+# Option 1: Download from a public file service
+# Upload runpod_package.tar.gz to a service like:
+# - https://file.io (temporary file sharing)
+# - https://transfer.sh (command line file sharing)
+# - Google Drive (get direct download link)
+# Then: wget <URL> -O runpod_package.tar.gz
+
+# Option 2: Use Python HTTP server from your local machine
+# On your local machine: python3 -m http.server 8000
+# On RunPod: wget http://YOUR_LOCAL_IP:8000/runpod_package.tar.gz
+
+# Option 3: Create a GitHub Gist or repo
+# Even a private repo works since the pod has internet
+
+# Once you have the package:
+tar -xzf runpod_package.tar.gz
+pip install -r requirements.txt
+pip install lmdb
+python scripts/create_volumetric_cache.py --data-source neurosynth_subset_1k
+python train.py --config configs/baseline_vae.yaml --max-epochs 2
+
+# Monitor training
+# Training will show progress in the terminal
+# Check GPU usage: nvidia-smi
+# W&B dashboard: https://wandb.ai

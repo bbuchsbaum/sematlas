@@ -1,0 +1,36 @@
+{
+  "timestamp": "2025-08-03 16:46:44",
+  "validation_results": {
+    "model_type": "untrained",
+    "checkpoint": null,
+    "reconstruction_metrics": {
+      "mean_mse": 0.09390275925397873,
+      "std_mse": 0.00010555714834481478,
+      "mean_correlation": -0.0055518035450329425,
+      "std_correlation": 0.00866905392574651,
+      "num_samples": 20
+    },
+    "traversal_results": {
+      "dim_0_diversity": 0.29477447271347046,
+      "dim_1_diversity": 0.2946627736091614,
+      "dim_2_diversity": 0.29458490014076233,
+      "dim_3_diversity": 0.2946425974369049,
+      "dim_4_diversity": 0.2946319878101349,
+      "mean_diversity": 0.2946593463420868,
+      "num_dimensions_tested": 5
+    },
+    "anatomical_plausibility": {
+      "mean_brain_mask_score": 2.0557894706726074,
+      "std_brain_mask_score": 0.03545669466257095,
+      "mean_out_of_brain_ratio": 0.2841779589653015,
+      "num_samples": 20
+    }
+  },
+  "pass_fail_criteria": {
+    "reconstruction_mse_improved": false,
+    "correlation_threshold": false,
+    "latent_diversity": true,
+    "anatomically_plausible": true
+  },
+  "overall_pass": false
+}

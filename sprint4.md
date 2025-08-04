@@ -103,3 +103,48 @@ The dashboard includes a "Downloads" section where users can directly access int
 | **Neural Network Models** (Encoders/Decoders) | **ONNX** | The industry standard for model interoperability, runnable in C++, Java, JS, R, etc. |
 | **Volumetric Brain Maps** | **NIfTI (.nii.gz)** | The universal standard for fMRI data, compatible with all neuroimaging software. |
 | **Point-Cloud Coordinates** | **CSV** | A simple, text-based format easily parsed by any language. |
+
+---
+
+## **Data Strategy Addendum for Sprint 4**
+
+### **Production Exclusivity (Weeks 10-12)**
+The **`neurosynth_subset_1k`** is now **officially retired**. All activities in this final sprint are considered "production" and will exclusively use the models trained on the **`neurosynth_full_12k`** dataset. This ensures that all released materials are derived from the most robust and comprehensive version of our models.
+
+#### **Production-Only Requirements**
+All Sprint 4 activities must use production-trained models and full-scale data:
+
+**Epic 1: Cross-Model Analysis (S4.1.1-S4.1.3)**
+- **CCA Analysis**: Canonical Correlation Analysis between volumetric and point-cloud models requires full data distribution coverage
+- **H-VAE Training**: Hierarchical VAE prototype development using complete `neurosynth_full_12k` dataset
+- **HDBSCAN Clustering**: Latent space clustering analysis on full production latent representations
+
+**Epic 2: Temporal Analysis (S4.2.1-S4.2.3)**
+- **Chronological Time Series**: Temporal dynamics analysis requires complete publication year coverage from full dataset
+- **Trajectory GRU**: Forecasting model training on complete temporal sequence from `neurosynth_full_12k`
+- **Neuroscience Zeitgeist**: Timeline visualization based on production-scale latent evolution
+
+**Epic 3: Interoperable Release (S4.3.1-S4.3.4)**
+- **Tabular Exports**: CSV/Parquet generation from complete dataset and production model latent spaces
+- **ONNX Models**: Export of production-trained encoders/decoders only
+- **NIfTI Outputs**: Brain maps generated exclusively from production models
+- **Usage Examples**: Demonstrations using production-scale exported artifacts
+
+**Epic 4: Documentation & Deployment (S4.4.1-S4.4.4)**
+- **Scientific Manuscripts**: Figures and results generated from production models exclusively
+- **Public Dashboard**: Final deployment showcasing production model capabilities
+- **Artifact Distribution**: All downloadable materials derived from full-scale training
+
+#### **Quality Assurance Requirements**
+- **Model Lineage**: All exported artifacts must include metadata documenting their derivation from `neurosynth_full_12k` training
+- **Performance Metrics**: Final evaluation metrics computed on production models only
+- **Reproducibility**: Complete training logs and configuration files for production runs must be archived
+- **Cross-Validation**: Final model performance validated against NeuroVault external data
+
+#### **Public Release Standards**
+- **Data Provenance**: All released artifacts include clear documentation of training data scale and methodology
+- **Model Versioning**: Production model versions clearly distinguished from development prototypes
+- **Performance Guarantees**: Published performance metrics based exclusively on full-scale validation
+- **Scientific Validity**: All scientific claims and demonstrations supported by production-scale evidence
+
+This production-exclusive approach ensures that all public-facing materials, scientific conclusions, and released artifacts represent the project's highest quality standards and are suitable for broad scientific and practical application.

@@ -11,43 +11,43 @@ Here is the plan for Sprint 2.
 
 **Key Demo KPI (The "Payload"):** **The "Counterfactual Machine."** An enhanced version of the Sprint 1 demo. This interactive dashboard will have sliders for latent variables *and* dropdown menus/sliders for conditioning variables (e.g., `Task Category`, `Sample Size`, `Year`). The user can select a latent code from a "Working Memory" study, then toggle the "Year" from 1998 to 2023 and instantly see how the model predicts the activation map would change, demonstrating the power of conditional generation.
 
-**GPU Requirements & Paperspace Integration:**
+**GPU Requirements & Cloud Platform Integration:**
 Sprint 2 introduces significantly larger models (DenseNet + FiLM + GRL) requiring GPU acceleration. The M3 MacBook used in Sprint 1 will be insufficient for the computational demands.
 
-**Solution: Paperspace Gradient Integration**
-- **Platform**: Paperspace Gradient for console-based GPU training
-- **Cost**: ~$0.50-0.76/hour, estimated $15-25 total for Sprint 2
-- **Setup**: One-time CLI installation and authentication
-- **Workflow**: Develop locally, train on cloud GPU, sync results automatically
+**Solution: RunPod GPU Platform**
+- **Platform**: RunPod for on-demand GPU training (migrated from Paperspace due to account restrictions)
+- **Cost**: RTX 4090 @ $0.69/hr, A100 80GB @ $1.89/hr
+- **Setup**: RunPod SDK installation and API authentication
+- **Workflow**: Develop locally, train on cloud GPU, sync results via SSH/SCP
 
 **Criteria for Sprint Completion & Proceeding to Sprint 3:**
 1.  The C-β-VAE model trains end-to-end with both FiLM conditioning and the GRL de-biasing head.
 2.  The validation loss for the C-β-VAE is lower than the baseline VAE from Sprint 1, demonstrating the benefit of conditioning.
 3.  The adversarial "year predictor" head shows a validation accuracy that is only slightly better than chance (~5-10% for 10 year-bins), proving the de-biasing is effective.
 4.  The "Counterfactual Machine" demo is functional and shows qualitatively plausible changes in generated maps when conditioning variables are altered.
-5.  **Paperspace GPU training pipeline is functional and cost-effective.**
+5.  **RunPod GPU training pipeline is functional and cost-effective.**
 
 ---
 
 #### **Granular Tickets for Sprint 2**
 
-**Epic 0: Paperspace GPU Setup & Integration**
+**Epic 0: RunPod GPU Setup & Integration**
 
-*   **Ticket S2.0.1: `infra:setup_paperspace_cli`**
-    *   **Description:** Install Paperspace Gradient CLI locally and authenticate. Create project for sematlas training runs. Test basic job submission with a simple PyTorch example.
-    *   **Acceptance Criteria:** `gradient --version` works. Can successfully create and run a test job. Project `sematlas` exists in Paperspace account.
+*   **Ticket S2.0.1: `infra:setup_runpod_sdk`**
+    *   **Description:** Install RunPod SDK locally and authenticate. Configure API key in .env. Test basic pod creation with a simple PyTorch example.
+    *   **Acceptance Criteria:** `runpod.get_pods()` works. Can successfully create and terminate a test pod. API authentication verified.
 
 *   **Ticket S2.0.2: `infra:create_training_scripts`**
-    *   **Description:** Create console-based scripts for Paperspace training orchestration: `scripts/paperspace_train.sh`, `scripts/monitor_training.sh`, `scripts/download_results.sh`, and `scripts/cost_report.sh`.
+    *   **Description:** Create console-based scripts for RunPod training orchestration: `scripts/train_runpod.py`, `scripts/runpod_train.sh`, `scripts/monitor_runpod.sh`, and startup scripts for containers.
     *   **Acceptance Criteria:** Scripts exist and have proper permissions. Each script has clear usage documentation. Test run with dummy job completes successfully.
 
 *   **Ticket S2.0.3: `infra:configure_environment_sync`**
-    *   **Description:** Configure automatic upload of code, data, and configs to Paperspace. Ensure environment.yml and requirements are properly handled. Set up automatic download of training artifacts.
-    *   **Acceptance Criteria:** Local code changes sync to Paperspace automatically. Training results download to correct local directories. Environment reproducibility verified.
+    *   **Description:** Configure code upload to RunPod pods via git clone or SCP. Ensure environment setup works in container. Set up result download via SSH.
+    *   **Acceptance Criteria:** Code successfully transfers to RunPod pod. Training results download to correct local directories. Environment reproducibility verified.
 
-*   **Ticket S2.0.4: `infra:integrate_wandb_paperspace`**
-    *   **Description:** Ensure W&B logging works seamlessly from Paperspace training runs. Configure API keys and logging to be accessible from both local development and cloud training.
-    *   **Acceptance Criteria:** W&B dashboard shows metrics from Paperspace training runs. Local development and cloud training logs appear in same project. API key management secure and functional.
+*   **Ticket S2.0.4: `infra:integrate_wandb_runpod`**
+    *   **Description:** Ensure W&B logging works seamlessly from RunPod training runs. Configure API keys and logging to be accessible from both local development and cloud training.
+    *   **Acceptance Criteria:** W&B dashboard shows metrics from RunPod training runs. Local development and cloud training logs appear in same project. API key management secure and functional.
 
 **Epic 1: Implementing Advanced Model Architecture**
 
@@ -94,3 +94,39 @@ Sprint 2 introduces significantly larger models (DenseNet + FiLM + GRL) requirin
 *   **Ticket S2.3.2: `demo:build_conditional_dashboard`**
     *   **Description:** Evolve the Sprint 1 notebook into a simple Streamlit or Dash web app. Create UI elements (dropdowns for categorical metadata, sliders for continuous metadata) that construct the metadata vector `m`. The app should allow a user to fix `z` and interactively change `m` to see the effect on the decoded brain map.
     *   **Acceptance Criteria:** The dashboard is functional and deployed locally. Changing a dropdown (e.g., "Task: Emotion" to "Task: Memory") produces a visibly different and plausible brain map in the viewer.
+
+---
+
+## **Data Strategy Addendum for Sprint 2**
+
+### **Development Phase (Weeks 4-5)**
+All new architectural features—including the DenseNet backbone, metadata imputation head, FiLM conditioning layers, and the GRL de-biasing module (tickets S2.1.1 through S2.1.4)—will be developed and unit-tested against the **`neurosynth_subset_1k`**. This rapid iteration is essential for debugging the complex interactions between these advanced components without the computational overhead of full-scale data.
+
+**Key Development Requirements:**
+- **S2.0.1-S2.0.4**: RunPod GPU setup and integration using subset data for testing
+- **S2.1.1-S2.1.4**: All advanced architecture features developed on `neurosynth_subset_1k`
+- **S2.2.1-S2.2.3**: Training hardening and optimization tested on subset scale
+- **Rapid iteration**: CI/CD cycles remain <5 minutes for immediate feedback
+
+**Critical Metadata Requirements:**
+The subset data must include representative metadata distributions for:
+- Publication years (1998-2023) for adversarial de-biasing testing
+- Task categories for FiLM conditioning validation  
+- Sample sizes and field strengths for imputation head development
+
+### **Production Phase (Week 6)**
+Following successful integration and testing on the subset, we will launch the **definitive C-β-VAE training run** on the **`neurosynth_full_12k`** dataset. This full-scale run will produce the production-grade model that incorporates all new features and is essential for the "Counterfactual Machine" demo.
+
+**Production Requirements:**
+- **Full-scale C-β-VAE training**: Complete conditional model training on `neurosynth_full_12k`
+- **Formal evaluation metrics**: S2.2.4 evaluation script validated against full dataset
+- **Demo validation**: "Counterfactual Machine" must demonstrate conditioning effects at production scale
+- **Performance comparison**: Quantitative improvement over Sprint 1 baseline model
+
+**Success Criteria Integration:**
+- **Subset validation**: All architectural components functional on development data
+- **Scale transition**: Pipeline compatibility verified during subset→full transition
+- **Production metrics**: Final evaluation only valid on full dataset results
+- **De-biasing validation**: Adversarial year predictor requires full temporal distribution
+
+This strategy ensures architectural soundness through rapid subset development while delivering production-quality conditional generation capabilities.

@@ -25,7 +25,7 @@ This appendix provides a detailed technical overview of the three key external p
     *   **`features.json`:** A file mapping studies to cognitive terms based on abstract text frequency. We will use this post-hoc for interpreting latent factors and as a baseline for our model's zero-shot decoding performance.
 
 *   **A1.2.4 Key Technical Considerations for Our Team:**
-    1.  **Coordinate Space Ambiguity:** Neurosynth's database is a known mix of MNI and Talairach coordinate spaces. This is not an edge case; it is a central data integrity challenge. Our explicit `tal2icbm` transformation and checksum logging (**Ticket S1.1.3**) is a non-negotiable step to homogenize the data before any modeling.
+    1.  **Coordinate Space Preprocessing:** Neurosynth has already preprocessed all coordinates to MNI152 space during database creation using automated space detection (~80% accuracy) and transformation. Our coordinate validation (**Ticket S1.1.3**) ensures data quality by validating coordinate bounds rather than applying additional transformations that could introduce double-transformation errors.
     2.  **Metadata Sparsity:** While rich, metadata is often missing (e.g., sample size, scanner details). This directly motivates our advanced imputation strategy (**Ticket S2.1.2**). The team should not assume metadata fields are complete and must build robust handling for `NaN` values.
     3.  **Data Structure:** The raw `database.json` is a nested list format. The first task of the data pipeline is to parse this into a flattened, tabular `pandas.DataFrame` within the NiMARE `Dataset` object, which is a more tractable format for our downstream processing.
     4.  **Version:** We will use the latest stable version of the Neurosynth database and explicitly record its release date and version hash for reproducibility.
@@ -44,7 +44,7 @@ This appendix provides a detailed technical overview of the three key external p
     *   **`nimare.dataset.Dataset` Object:** This is the central, in-memory representation of our data during the initial processing stages. It holds coordinates, metadata, text, and images in a single, coherent object.
     *   **`nimare.io.convert_neurosynth()`:** The function used to parse raw Neurosynth files directly into a NiMARE `Dataset` object.
     *   **Kernel Transformers (e.g., `nimare.meta.kernel.GaussianKernel`):** These are the core functions we will use to implement our dual-kernel (6mm/12mm) and anisotropic augmentation strategy (**Ticket S1.1.4**). We will wrap these functions in our custom caching script.
-    *   **Coordinate Transformers (e.g., `nimare.utils.tal2icbm`):** As mentioned above, this is the specific function used to execute **Ticket S1.1.3**.
+    *   **Coordinate Validation Utilities:** NiMARE provides coordinate space utilities that we use for validation purposes in **Ticket S1.1.3**, ensuring our understanding of Neurosynth's preprocessing is correct.
 
 *   **A1.3.4 Key Technical Considerations for Our Team:**
     1.  **Version Pinning:** NiMARE is under active development. We **must** pin the exact version (`nimare==x.y.z`) in our `environment.yml` / `requirements.txt` to ensure our data pipeline is perfectly reproducible.

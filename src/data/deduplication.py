@@ -217,8 +217,12 @@ def load_and_deduplicate_neurosynth(
     
     logger.info(f"Loading Neurosynth data from {data_path}")
     
-    # Load the data (assuming JSON format from our download script)
-    if data_path.suffix == '.json':
+    # Load the data (CSV or JSON format)
+    if data_path.suffix == '.csv':
+        df = pd.read_csv(data_path)
+        logger.info(f"Loaded CSV with {len(df)} coordinates")
+        
+    elif data_path.suffix == '.json':
         import json
         with open(data_path, 'r') as f:
             studies = json.load(f)
@@ -243,7 +247,8 @@ def load_and_deduplicate_neurosynth(
     else:
         raise ValueError(f"Unsupported file format: {data_path.suffix}")
     
-    logger.info(f"Loaded {len(df)} coordinates from {len(studies)} studies")
+    n_studies = df['study_id'].nunique() if 'study_id' in df.columns else 'unknown'
+    logger.info(f"Loaded {len(df)} coordinates from {n_studies} studies")
     
     # Perform deduplication
     deduplicated_df, stats = deduplicate_contrasts(df)

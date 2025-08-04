@@ -1,0 +1,62 @@
+model:
+  architecture: "resnet_vae"
+  latent_dim: 128
+  resnet_depth: 10
+  group_norm_groups: 8
+  input_shape: [91, 109, 91]  # MNI152 standard brain template shape
+  dropout: 0.1
+
+training:
+  max_epochs: 15  # Reduced for validation
+  batch_size: 8
+  learning_rate: 0.001
+  weight_decay: 0.01
+  beta_schedule: "linear"  # Options: constant, linear, cyclical
+  beta_max: 1.0
+  beta_warmup_epochs: 5  # Reduced for validation
+  gradient_clip_val: 1.0
+  accumulate_grad_batches: 4
+
+data:
+  train_split: "data/processed/splits/train.csv"
+  val_split: "data/processed/splits/val.csv"
+  test_split: "data/processed/splits/test.csv"
+  volumetric_cache_path: "data/processed/volumetric_cache_lmdb"
+  num_workers: 2  # Reduced for validation
+  pin_memory: true
+
+# Disable W&B for validation
+# wandb:
+#   project: "generative-brain-atlas"
+#   entity: null  # Will use default entity
+#   name: "validation-resnet-vae"
+#   tags: ["validation", "vae", "baseline", "resnet"]
+#   notes: "Validation training for VS1.2.3 baseline VAE latent validation"
+#   log_model: "end"  # Only save final model
+#   save_dir: "wandb_logs"
+
+checkpointing:
+  monitor: "val_loss"
+  mode: "min"
+  save_top_k: 1  # Only save best
+  save_last: true
+  dirpath: "checkpoints"
+  filename: "validation-vae-{epoch:02d}-{val_loss:.3f}"
+
+early_stopping:
+  monitor: "val_loss"
+  patience: 8  # Reduced patience
+  mode: "min"
+  min_delta: 0.001
+
+logging:
+  val_check_interval: 1.0
+  log_every_n_steps: 25  # More frequent logging
+  log_images_every_n_epochs: 3
+  num_sample_images: 2
+
+hardware:
+  accelerator: "cpu"  # Use CPU to avoid MPS issues for validation
+  precision: "32"  # Full precision for stability
+  devices: 1
+  num_nodes: 1

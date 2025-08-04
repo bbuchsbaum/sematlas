@@ -1,0 +1,57 @@
+# Background Validation VAE Configuration
+# For VS1.2.3 validation - runs in background while we test framework
+
+model:
+  latent_dim: 32
+  group_norm_groups: 8
+
+training:
+  max_epochs: 10  # Target ≥10 epochs for validation
+  batch_size: 8
+  learning_rate: 1e-3
+  weight_decay: 1e-5
+  gradient_clip_val: 1.0
+  beta_schedule: "linear"
+  beta_max: 1.0
+  beta_warmup_epochs: 2
+
+data:
+  train_split: "data/processed/splits/train_split.csv"
+  val_split: "data/processed/splits/val_split.csv" 
+  test_split: "data/processed/splits/test_split.csv"
+  volumetric_cache_path: "data/processed/volumetric_cache_lmdb"
+  num_workers: 0
+  pin_memory: false
+
+checkpointing:
+  monitor: "val_loss"
+  mode: "min"
+  save_top_k: 2
+  save_last: true
+  dirpath: "checkpoints/validation_background"
+  filename: "vae-{epoch:02d}-{val_loss:.3f}"
+  save_on_train_epoch_end: true  # Save after each epoch
+
+early_stopping:
+  monitor: "val_loss"
+  patience: 5
+  mode: "min"
+  min_delta: 0.001
+
+logging:
+  log_every_n_steps: 50
+  val_check_interval: 0.5  # Check validation twice per epoch
+
+# No W&B for background run
+# wandb:
+#   project: "generative-brain-atlas"
+#   name: "background-validation-vae"
+
+hardware:
+  accelerator: "cpu"
+  devices: 1
+  precision: "32"
+  
+# Use subset for faster training in background
+limit_train_batches: 0.25  # Use 25% of batches per epoch
+limit_val_batches: 0.25    # Validate on 25% of batches

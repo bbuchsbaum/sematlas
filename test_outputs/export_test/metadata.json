@@ -1,0 +1,25 @@
+{
+  "model_info": {
+    "status": "loaded",
+    "is_trained": false,
+    "checkpoint_path": null,
+    "latent_dim": 128,
+    "input_shape": [
+      91,
+      109,
+      91
+    ],
+    "device": "cpu",
+    "total_parameters": 9000489,
+    "trainable_parameters": 9000489,
+    "model_type": "ResNetVAE3D"
+  },
+  "traversal_info": {
+    "dimension": 0,
+    "range": [
+      -2,
+      2
+    ],
+    "num_steps": 5
+  }
+}

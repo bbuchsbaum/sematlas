@@ -43,6 +43,7 @@ data/processed/
 wandb/
 *.log
 checkpoints/
+lightning_logs/
 
 # DVC
 /data/.dvc

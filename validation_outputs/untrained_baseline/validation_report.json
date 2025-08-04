@@ -1,0 +1,45 @@
+{
+  "timestamp": "2025-08-03T14:23:35.223906",
+  "checkpoint": null,
+  "metrics": {
+    "encoding": {
+      "num_samples": 10,
+      "latent_dim": 32,
+      "latent_stats": {
+        "mean": -0.04952026531100273,
+        "std": 1.1458368301391602,
+        "min": -5.144315719604492,
+        "max": 2.937629222869873,
+        "shape": [
+          10,
+          32
+        ]
+      },
+      "diversity_score": 8.669610023498535,
+      "encoding_successful": true
+    },
+    "reconstruction": {
+      "num_samples": 5,
+      "mean_mse": 0.1115546315908432,
+      "std_mse": 0.0003290283191444022,
+      "mean_within_mask_ratio": 0.5304411163515097,
+      "anatomically_plausible": false,
+      "visualization": "validation_outputs/untrained_baseline/reconstruction_comparison.png"
+    },
+    "latent_traversal": {
+      "num_dimensions_tested": 5,
+      "num_steps": 7,
+      "mean_pattern_diversity": 0.08725659102201462,
+      "per_dim_diversity": [
+        0.08714431524276733,
+        0.08680149912834167,
+        0.08750613033771515,
+        0.08744792640209198,
+        0.08738308399915695
+      ],
+      "produces_different_patterns": true,
+      "visualization": "validation_outputs/untrained_baseline/latent_traversal.png"
+    }
+  },
+  "visualizations": []
+}

@@ -1,0 +1,62 @@
+model:
+  architecture: "resnet_vae"
+  latent_dim: 128
+  resnet_depth: 10
+  group_norm_groups: 8
+  input_shape: [91, 109, 91]  # MNI152 standard brain template shape
+  dropout: 0.1
+
+training:
+  max_epochs: 15  # Reduced for validation test
+  batch_size: 8
+  learning_rate: 0.001
+  weight_decay: 0.01
+  beta_schedule: "linear"  # Options: constant, linear, cyclical
+  beta_max: 1.0
+  beta_warmup_epochs: 5  # Reduced for validation test
+  gradient_clip_val: 1.0
+  accumulate_grad_batches: 4
+
+data:
+  train_split: "data/processed/train_split.csv"
+  val_split: "data/processed/val_split.csv"
+  test_split: "data/processed/test_split.csv"
+  volumetric_cache_path: "data/processed/volumetric_cache.lmdb"
+  num_workers: 2
+  pin_memory: true
+
+# W&B section commented out for test run without authentication
+# wandb:
+#   project: "generative-brain-atlas"
+#   entity: null  # Will use default entity
+#   name: "baseline-resnet-vae"
+#   tags: ["baseline", "vae", "sprint1", "resnet"]
+#   notes: "Baseline 3D ResNet VAE for brain activation map generation"
+#   log_model: "all"  # Options: false, "all", "end"
+#   save_dir: "wandb_logs"
+
+checkpointing:
+  monitor: "val_loss"
+  mode: "min"
+  save_top_k: 3
+  save_last: true
+  dirpath: "checkpoints"
+  filename: "resnet-vae-{epoch:02d}-{val_loss:.3f}"
+
+early_stopping:
+  monitor: "val_loss"
+  patience: 8  # Reduced for validation test
+  mode: "min"
+  min_delta: 0.001
+
+logging:
+  val_check_interval: 1.0
+  log_every_n_steps: 10  # Increased logging frequency for test
+  log_images_every_n_epochs: 2
+  num_sample_images: 4
+
+hardware:
+  accelerator: "cpu"  # Force CPU for compatibility with 3D operations
+  precision: "32"  # Use full precision on CPU
+  devices: 1
+  num_nodes: 1

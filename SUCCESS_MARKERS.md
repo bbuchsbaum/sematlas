@@ -27,11 +27,11 @@
 - [ ] **PASS/FAIL**: Log file shows >10% deduplication rate (indicating function works)
 - [ ] **PASS/FAIL**: Retains contrasts with opposite t-stat signs as distinct
 
-#### ✅ S1.1.3: Talairach Correction
-- [ ] **PASS/FAIL**: `tal2icbm` transformation applies correctly to test coordinates
-- [ ] **PASS/FAIL**: `mismatch_log.json` created with RMSD >4mm studies logged
-- [ ] **PASS/FAIL**: Unit test verifies known Talairach→MNI transformation accuracy
-- [ ] **PASS/FAIL**: Known MNI coordinates remain unchanged
+#### ✅ S1.1.3: Coordinate Space Validation
+- [ ] **PASS/FAIL**: Neurosynth preprocessing assumptions validated (coordinates already in MNI152)
+- [ ] **PASS/FAIL**: `coordinate_validation_log.json` created with coordinate bounds validation
+- [ ] **PASS/FAIL**: No coordinate transformations applied (data preserved exactly as-is)
+- [ ] **PASS/FAIL**: All input coordinates preserved exactly without modification
 
 #### ✅ S1.1.4: Volumetric Cache Creation
 - [ ] **PASS/FAIL**: LMDB database created successfully 
@@ -97,29 +97,29 @@
 **Duration**: 3 weeks
 **Builds on**: Sprint 1 SUCCESS (all criteria met)
 
-### Epic 0: Paperspace GPU Setup - SUCCESS CRITERIA
+### Epic 0: RunPod GPU Setup - SUCCESS CRITERIA
 
-#### ✅ S2.0.1: Paperspace CLI Setup
-- [ ] **PASS/FAIL**: Gradient CLI installed and authenticated successfully
-- [ ] **PASS/FAIL**: `gradient --version` returns valid version number
-- [ ] **PASS/FAIL**: Test job submission and execution completes without errors
-- [ ] **PASS/FAIL**: Paperspace project `sematlas` created and accessible
+#### ✅ S2.0.1: RunPod SDK Setup
+- [ ] **PASS/FAIL**: RunPod SDK installed and authenticated successfully
+- [ ] **PASS/FAIL**: `runpod.get_pods()` returns successfully
+- [ ] **PASS/FAIL**: Test pod creation and termination works without errors
+- [ ] **PASS/FAIL**: API authentication verified with test operations
 
 #### ✅ S2.0.2: Training Scripts Creation
-- [ ] **PASS/FAIL**: All 4 required scripts exist with executable permissions
-- [ ] **PASS/FAIL**: `paperspace_train.sh` successfully launches test job
-- [ ] **PASS/FAIL**: `monitor_training.sh` displays real-time progress
-- [ ] **PASS/FAIL**: `download_results.sh` retrieves artifacts correctly
+- [ ] **PASS/FAIL**: All required scripts exist with executable permissions
+- [ ] **PASS/FAIL**: `runpod_train.sh` successfully launches test pod
+- [ ] **PASS/FAIL**: `monitor_runpod.sh` displays pod status and SSH info
+- [ ] **PASS/FAIL**: `train_runpod.py` orchestrates training correctly
 
 #### ✅ S2.0.3: Environment Synchronization
-- [ ] **PASS/FAIL**: Code upload to Paperspace workspace functional
-- [ ] **PASS/FAIL**: `environment.yml` installs correctly on Paperspace
-- [ ] **PASS/FAIL**: Training artifacts download to correct local paths
-- [ ] **PASS/FAIL**: Environment reproducibility verified between local and cloud
+- [ ] **PASS/FAIL**: Code upload to RunPod pod functional (git/SCP)
+- [ ] **PASS/FAIL**: `requirements.txt` installs correctly in container
+- [ ] **PASS/FAIL**: Training artifacts download via SSH to local paths
+- [ ] **PASS/FAIL**: Environment reproducibility verified between local and pod
 
 #### ✅ S2.0.4: W&B Integration
-- [ ] **PASS/FAIL**: W&B API key configuration works on Paperspace
-- [ ] **PASS/FAIL**: Training metrics appear in W&B dashboard from cloud runs
+- [ ] **PASS/FAIL**: W&B API key configuration works on RunPod
+- [ ] **PASS/FAIL**: Training metrics appear in W&B dashboard from pod runs
 - [ ] **PASS/FAIL**: Local and cloud training logs unified in same W&B project
 - [ ] **PASS/FAIL**: No API key exposure or security issues
 
@@ -375,6 +375,60 @@
 - [ ] **CRITICAL**: All artifacts successfully exported to non-Python formats
 - [ ] **CRITICAL**: Public dashboard deployed and fully functional
 - [ ] **CRITICAL**: Cross-platform compatibility demonstrated
+
+---
+
+## DATA STRATEGY COMPLIANCE CRITERIA
+
+### Universal Requirements (All Sprints)
+These criteria apply to ALL sprints and must be validated in addition to sprint-specific criteria:
+
+#### Development Phase Compliance
+- [ ] **PASS/FAIL**: Development work uses appropriate data scale (`neurosynth_subset_1k` or specified subset)
+- [ ] **PASS/FAIL**: CI/CD test cycles complete in <5 minutes using development data
+- [ ] **PASS/FAIL**: All architectural features functional on development data before production transition
+- [ ] **PASS/FAIL**: Development phase completed within specified timeframe (typically weeks 1-2)
+
+#### Production Phase Compliance  
+- [ ] **PASS/FAIL**: Production training uses complete `neurosynth_full_12k` dataset
+- [ ] **PASS/FAIL**: Final demo validation performed with production-trained models
+- [ ] **PASS/FAIL**: Pipeline compatibility verified during subset→full data transition
+- [ ] **PASS/FAIL**: Production phase completed within specified timeframe (typically week 3)
+
+#### Data Transition Validation
+- [ ] **PASS/FAIL**: No loss of functionality during development→production data transition
+- [ ] **PASS/FAIL**: Model architecture maintains compatibility across data scales
+- [ ] **PASS/FAIL**: Performance metrics computed on production-scale data only
+- [ ] **PASS/FAIL**: Production model checkpoints available for subsequent sprints
+
+### Sprint-Specific Data Strategy Requirements
+
+#### Sprint 1: Foundation & Baseline
+- [ ] **PASS/FAIL**: Mock data → `neurosynth_subset_1k` transition completed by Week 1
+- [ ] **PASS/FAIL**: First full-scale training run completed successfully on `neurosynth_full_12k`
+- [ ] **PASS/FAIL**: "Latent Slider" demo validates with both development and production models
+
+#### Sprint 2: Advanced Conditioning
+- [ ] **PASS/FAIL**: All advanced features (FiLM, GRL, metadata imputation) validated on subset
+- [ ] **PASS/FAIL**: Metadata distribution in subset adequate for conditioning validation
+- [ ] **PASS/FAIL**: Final C-β-VAE training produces production-grade conditional model
+
+#### Sprint 3: Precision & Uncertainty
+- [ ] **PASS/FAIL**: Point-cloud and ensemble streams both use subset for development
+- [ ] **PASS/FAIL**: Week 9 dual production training (Point-Cloud + Ensemble) completed
+- [ ] **PASS/FAIL**: Uncertainty quantification valid only with full data distribution
+
+#### Sprint 4: Synthesis & Release
+- [ ] **PASS/FAIL**: Subset data officially retired - no development activities on subset
+- [ ] **PASS/FAIL**: ALL activities use production models trained on `neurosynth_full_12k`
+- [ ] **PASS/FAIL**: Released artifacts include data provenance documentation
+- [ ] **PASS/FAIL**: Scientific claims supported exclusively by production-scale evidence
+
+### Data Strategy Failure Criteria
+- **IMMEDIATE SPRINT FAILURE**: Using wrong data scale for development vs production phases
+- **IMMEDIATE SPRINT FAILURE**: Production metrics computed on development data
+- **IMMEDIATE SPRINT FAILURE**: Public artifacts derived from development-scale models (Sprint 4)
+- **IMMEDIATE SPRINT FAILURE**: Pipeline incompatibility during data scale transitions
 
 ---
 

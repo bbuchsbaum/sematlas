@@ -65,3 +65,55 @@ Here is the plan for Sprint 3.
 *   **Ticket S3.2.5: `demo:build_confidence_explorer`**
     *   **Description:** Upgrade the Sprint 2 "Counterfactual Machine" dashboard. Add a dropdown menu to select which of the three output volumes from the ensemble wrapper is displayed in the nilearn viewer.
     *   **Acceptance Criteria:** The user can seamlessly switch between viewing the model's prediction, its "ignorance" map, and its "data noise" map. This forms Pane 1 of the demo.
+
+---
+
+## **Data Strategy Addendum for Sprint 3**
+
+### **Development Phase (Weeks 7-8)**
+This sprint's parallel streams will both leverage the subset strategy to enable rapid iteration on advanced components before committing to computationally expensive full-scale training.
+
+#### **Point-Cloud Stream (S3.1.1-S3.1.5)**
+The Point-Cloud C-VAE will be developed and debugged using a **point-cloud version of `neurosynth_subset_1k`**. This subset must preserve the coordinate-level structure while maintaining computational efficiency.
+
+**Point-Cloud Specific Requirements:**
+- **S3.1.1**: HDF5 point-cloud cache created from `neurosynth_subset_1k` coordinates
+- **S3.1.2-S3.1.4**: PointNet++ architecture and training developed on subset scale
+- **Validation metrics**: Chamfer Distance and Sinkhorn EMD computed on subset for rapid feedback
+- **Coordinate fidelity**: Subset must maintain millimeter-scale precision representative of full dataset
+
+#### **Uncertainty Stream (S3.2.1-S3.2.5)**
+The Deep Ensemble training logic (snapshot ensembling, cyclical learning rates) will be prototyped and validated on the volumetric **`neurosynth_subset_1k`** to ensure the mechanics are correct without high computational cost.
+
+**Ensemble Specific Requirements:**
+- **S3.2.1-S3.2.2**: Aleatoric uncertainty and ensemble training tested on subset
+- **S3.2.3**: ECE calibration metric validated with subset predictions
+- **S3.2.4-S3.2.5**: Ensemble inference and demo tested on subset-trained models
+- **Cyclical training**: Full 5-cycle ensemble training feasible on subset scale for validation
+
+### **Production Phase (Week 9)**
+This phase involves **two major, computationally intensive training runs** on the **`neurosynth_full_12k`** dataset. This is non-negotiable, as meaningful epistemic uncertainty estimates can only be derived from the model's performance across the entire data distribution.
+
+#### **Production Training Requirements**
+1. **Point-Cloud C-VAE Production Training**:
+   - Complete point-cloud dataset derived from `neurosynth_full_12k`
+   - Final Chamfer+EMD loss optimization at full scale
+   - Precision validation against volumetric model predictions
+
+2. **Deep Ensemble Production Training**:
+   - 5-model ensemble training on complete volumetric `neurosynth_full_12k`
+   - Full cyclical learning rate schedule (5 complete cycles)
+   - Epistemic uncertainty validation requires full data distribution coverage
+
+#### **Cross-Model Integration**
+- **Pane 1**: Volumetric ensemble uncertainty visualization (3 uncertainty types)
+- **Pane 2**: Point-cloud precision validation and coordinate-level accuracy
+- **Demo integration**: "Dual-View Confidence Explorer" requires both production models
+
+### **Critical Success Dependencies**
+- **Computational resources**: Week 9 requires significant GPU allocation for dual production training
+- **Model compatibility**: Both streams must work with same metadata conditioning from Sprint 2
+- **Scale validation**: Subset→full transitions must preserve model architecture compatibility
+- **Uncertainty validity**: Ensemble uncertainty only meaningful with full data distribution
+
+This strategy enables parallel development of complex precision and uncertainty components while ensuring production models capture the full complexity and distribution coverage required for valid uncertainty quantification.

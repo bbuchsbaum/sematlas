@@ -1,0 +1,199 @@
+{
+  "sync_version": "1.0",
+  "timestamp": "2025-08-03T15:16:10-04:00",
+  "git_commit": "9fdb886d",
+  "files": {
+    "train.py": {
+      "hash": "e84d755150da9be6",
+      "size": 10597,
+      "modified": 1754244871.1339872
+    },
+    "requirements.txt": {
+      "hash": "331cc12507fc2c04",
+      "size": 395,
+      "modified": 1754248570.4267666
+    },
+    "environment.yml": {
+      "hash": "6a9529022684c2c5",
+      "size": 773,
+      "modified": 1754182555.0582263
+    }
+  },
+  "directories": {
+    "src/": [
+      {
+        "path": "src/training/vae_lightning.py",
+        "hash": "e38e4e470d6fea8b"
+      },
+      {
+        "path": "src/training/kl_controller.py",
+        "hash": "317597676ead8e5f"
+      },
+      {
+        "path": "src/models/conditional_densenet_vae.py",
+        "hash": "e34602ade7408e77"
+      },
+      {
+        "path": "src/models/pointnet_vae.py",
+        "hash": "b3e05c624ffdc739"
+      },
+      {
+        "path": "src/models/resnet_vae.py",
+        "hash": "c0903736f66f26b6"
+      },
+      {
+        "path": "src/models/conditional_pointnet_vae.py",
+        "hash": "917f36cdbb97e6da"
+      },
+      {
+        "path": "src/models/densenet_vae.py",
+        "hash": "efd7d8c38491c6b0"
+      },
+      {
+        "path": "src/models/metadata_imputation.py",
+        "hash": "2df5b7ccc2a648c3"
+      },
+      {
+        "path": "src/models/adversarial_conditional_vae.py",
+        "hash": "ada7dde9596d3eaf"
+      },
+      {
+        "path": "src/models/adversarial_debiasing.py",
+        "hash": "da3683b80ee05976"
+      },
+      {
+        "path": "src/inference/__init__.py",
+        "hash": "f48174d0e7acf4f3"
+      },
+      {
+        "path": "src/inference/model_wrapper.py",
+        "hash": "035eff3edd1d0d63"
+      },
+      {
+        "path": "src/data/volumetric_cache.py",
+        "hash": "e8ead212a71dc945"
+      },
+      {
+        "path": "src/data/pointcloud_cache.py",
+        "hash": "e2cde0f070e35cf0"
+      },
+      {
+        "path": "src/data/deduplication.py",
+        "hash": "921789718c3e8810"
+      },
+      {
+        "path": "src/data/lightning_datamodule.py",
+        "hash": "9fe9f265247e290d"
+      },
+      {
+        "path": "src/data/coordinate_transform.py",
+        "hash": "cc21ba4b80ec8175"
+      },
+      {
+        "path": "src/data/volumetric_cache_simple.py",
+        "hash": "7c61e1f51fce5cad"
+      }
+    ],
+    "configs/": [
+      {
+        "path": "configs/baseline_vae.yaml",
+        "hash": "e1bed4807a4e73fe"
+      },
+      {
+        "path": "configs/background_validation_vae.yaml",
+        "hash": "b99f5f600b5e0457"
+      },
+      {
+        "path": "configs/minimal_vae_test.yaml",
+        "hash": "f48137a4955a13ec"
+      },
+      {
+        "path": "configs/validation_vae.yaml",
+        "hash": "2678104e97d6a1ef"
+      },
+      {
+        "path": "configs/baseline_vae_test.yaml",
+        "hash": "2ac8397f8bc46289"
+      },
+      {
+        "path": "configs/minimal_validation_vae.yaml",
+        "hash": "2a4af04ab514ba34"
+      }
+    ],
+    "scripts/": [
+      {
+        "path": "scripts/test_deduplication.py",
+        "hash": "ad71c7b7bd1cf00d"
+      },
+      {
+        "path": "scripts/create_pointcloud_cache.py",
+        "hash": "21635ef538e941f9"
+      },
+      {
+        "path": "scripts/test_wandb_integration.py",
+        "hash": "9d0ed26e54317c52"
+      },
+      {
+        "path": "scripts/create_data_splits.py",
+        "hash": "4948d4c25971e86e"
+      },
+      {
+        "path": "scripts/simulate_dvc_pipeline.py",
+        "hash": "d3206e1f51ffe7b4"
+      },
+      {
+        "path": "scripts/download_neurosynth.py",
+        "hash": "f4fccbb82ff85086"
+      },
+      {
+        "path": "scripts/download_neurosynth_with_subset.py",
+        "hash": "5e9a56cb91d5e8a2"
+      },
+      {
+        "path": "scripts/apply_coordinate_correction.py",
+        "hash": "e56d7017f5d91d60"
+      },
+      {
+        "path": "scripts/train_paperspace.py",
+        "hash": "4e9cc0f29514991b"
+      },
+      {
+        "path": "scripts/convert_nimare_to_pipeline.py",
+        "hash": "7ac242e79a5b5336"
+      },
+      {
+        "path": "scripts/download_neurosynth_simple.py",
+        "hash": "b145d081ba526f57"
+      },
+      {
+        "path": "scripts/test_demo.py",
+        "hash": "065336f53c5e4c3b"
+      },
+      {
+        "path": "scripts/sync_environment.py",
+        "hash": "206c4e342fcaee21"
+      },
+      {
+        "path": "scripts/convert_pickle_to_lmdb.py",
+        "hash": "6698c20c5aa7f490"
+      }
+    ]
+  },
+  "requirements": {
+    "python_version": [
+      3,
+      9
+    ],
+    "dependencies": {
+      "torch": "2.2.1",
+      "pytorch_lightning": "missing",
+      "wandb": "missing",
+      "numpy": "1.26.4",
+      "pandas": "2.2.0"
+    },
+    "issues": [
+      "Missing package: pytorch_lightning",
+      "Missing package: wandb"
+    ]
+  }
+}

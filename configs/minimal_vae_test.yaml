@@ -1,0 +1,52 @@
+model:
+  architecture: "resnet_vae"
+  latent_dim: 16  # Reduced from 128
+  resnet_depth: 2  # Reduced from 10 for speed
+  group_norm_groups: 4  # Reduced from 8
+  input_shape: [91, 109, 91]  # MNI152 standard brain template shape
+  dropout: 0.1
+
+training:
+  max_epochs: 1  # Just 1 epoch for proof
+  batch_size: 2  # Very small batch
+  learning_rate: 0.001
+  weight_decay: 0.01
+  beta_schedule: "constant"  # Simplest schedule
+  beta_max: 0.1  # Lower beta for stability
+  beta_warmup_epochs: 0  # No warmup
+  gradient_clip_val: 1.0
+  accumulate_grad_batches: 1  # No accumulation
+
+data:
+  train_split: "data/processed/minimal_train_split.csv"
+  val_split: "data/processed/minimal_val_split.csv" 
+  test_split: "data/processed/minimal_val_split.csv"  # Reuse val for test
+  volumetric_cache_path: "data/processed/volumetric_cache.lmdb"
+  num_workers: 0  # No multiprocessing for simplicity
+  pin_memory: false
+
+checkpointing:
+  monitor: "val_loss"
+  mode: "min"
+  save_top_k: 1
+  save_last: true
+  dirpath: "checkpoints"
+  filename: "minimal-vae-{epoch:02d}-{val_loss:.3f}"
+
+early_stopping:
+  monitor: "val_loss"
+  patience: 1  # Stop quickly
+  mode: "min"
+  min_delta: 0.001
+
+logging:
+  val_check_interval: 1.0
+  log_every_n_steps: 1  # Log every step
+  log_images_every_n_epochs: 1
+  num_sample_images: 1
+
+hardware:
+  accelerator: "cpu"  # Force CPU for compatibility
+  precision: "32"  # Full precision on CPU
+  devices: 1
+  num_nodes: 1

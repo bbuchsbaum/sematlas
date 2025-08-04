@@ -32,10 +32,10 @@ Here is the plan for Sprint 1.
     *   **Technical Reference:** See proposal.md Section 2.2 for directional deduplication specification.
     *   **Acceptance Criteria:** Unit test passes with a known input/output pair. A log file is produced listing the number of original vs. retained contrasts.
 
-*   **Ticket S1.1.3: `data:implement_talairach_correction`**
-    *   **Description:** Implement the `tal2icbm` (Lancaster 2007) transformation for all coordinates. Add a checksum and logging mechanism for studies with >4mm RMSD.
-    *   **Technical Reference:** See Appendix1.md A1.2.4 for coordinate space challenges and A1.3.4 for NiMARE coordinate transformers.
-    *   **Acceptance Criteria:** A `mismatch_log.json` is created. Unit test verifies that known MNI coordinates are unchanged and known Talairach coordinates are transformed correctly.
+*   **Ticket S1.1.3: `data:validate_coordinate_space`**
+    *   **Description:** Validate that Neurosynth coordinates are in expected MNI152 space ranges and create validation logging. Neurosynth has already preprocessed all coordinates to MNI152 space, so validation confirms data quality without applying transformations.
+    *   **Technical Reference:** See Appendix1.md A1.2.4 for coordinate space preprocessing understanding and A1.3.4 for NiMARE validation utilities.
+    *   **Acceptance Criteria:** A `coordinate_validation_log.json` is created. Validation confirms coordinates are within MNI152 bounds. No coordinate transformations are applied - data is preserved exactly as-is.
 
 *   **Ticket S1.1.4: `data:create_volumetric_cache`**
     *   **Description:** Write the script to convert the final coordinate set into NIfTI volumes using the dual-kernel (6mm/12mm) augmentation strategy. Cache the resulting 4D tensors into a high-speed LMDB database for fast training.
@@ -73,3 +73,33 @@ Here is the plan for Sprint 1.
 *   **Ticket S1.3.2: `demo:build_interactive_notebook`**
     *   **Description:** Create a Jupyter notebook using `ipywidgets` and a 3D brain viewer like `nilearn.plotting.view_img`. The notebook should have a slider for one latent dimension. On slider change, it should call the inference wrapper and update the brain view.
     *   **Acceptance Criteria:** The notebook is functional. Moving the slider from -3 to +3 results in visibly different patterns in the `nilearn` viewer. The notebook is checked into the repository.
+
+---
+
+## **Data Strategy Addendum for Sprint 1**
+
+### **Development Phase (Weeks 1-2)**
+All development and debugging for tickets S1.1.1 through S1.2.4 will be performed using **mock data** transitioning to **`neurosynth_subset_1k`** data cache. The CI/CD pipeline will be configured to run tests exclusively against subset data to ensure rapid feedback cycles (<5 minutes per run). The primary goal is to achieve functional correctness of the data pipeline and the baseline VAE architecture on a manageable scale.
+
+**Key Data Requirements:**
+- **S1.1.1-S1.1.3**: Transition from mock data (100 studies) to real Neurosynth subset (1,000 studies)
+- **S1.1.4-S1.1.5**: Create volumetric cache and splits using `neurosynth_subset_1k`
+- **S1.2.1-S1.2.4**: Develop and test VAE architecture on subset data for rapid iteration
+
+### **Production Phase (Week 3)**
+During the final 2-3 days of the sprint, we will execute the **first full-scale training run** using the complete **`neurosynth_full_12k`** dataset. This run serves dual purposes:
+1. **Scale Validation**: Stress-test the entire data pipeline at production scale
+2. **Baseline Model**: Generate the definitive, high-quality model checkpoint required for the "Latent Slider" demo
+
+**Production Requirements:**
+- **Full-scale training**: Complete baseline VAE training on `neurosynth_full_12k`
+- **Demo validation**: "Latent Slider" must function with production-trained model
+- **Performance baseline**: Establish official metrics for Sprint 2 comparison
+
+### **Data Transition Protocol**
+1. **Mock → Subset**: Replace synthetic data with real 1k subset by end of Week 1
+2. **Pipeline validation**: Verify all components work with real coordinate data
+3. **Subset → Full**: Execute production training run in Week 3
+4. **Checkpoint validation**: Ensure demo works with both development and production models
+
+This strategy ensures rapid development cycles while providing the scale validation necessary for production-quality Sprint 1 completion.

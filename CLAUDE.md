@@ -43,9 +43,9 @@ This CLAUDE.md serves as the central implementation guide, but the complete proj
 
 #### **Neurosynth** - Foundational Data Source
 - ~12,000 fMRI studies with coordinates and metadata
-- Mixed MNI/Talairach coordinate spaces requiring transformation
+- Coordinates already preprocessed to MNI152 space by Neurosynth
 - Sparse metadata requiring robust imputation strategies
-- **Implementation tickets**: S1.1.1 (download), S1.1.3 (coordinate correction)
+- **Implementation tickets**: S1.1.1 (download), S1.1.3 (coordinate validation)
 
 #### **NiMARE** - Preprocessing Engine  
 - Comprehensive neuroimaging meta-analysis toolkit
@@ -104,6 +104,12 @@ This CLAUDE.md serves as the central implementation guide, but the complete proj
 - **NiMARE**: Preprocessing and coordinate transformation toolkit
 - **NeuroVault**: Ground-truth validation maps for evaluation
 
+#### Multi-Scale Data Strategy
+- **Development Data**: `neurosynth_subset_1k` - 1,000 study subset for rapid development and debugging
+- **Production Data**: `neurosynth_full_12k` - Complete dataset for final model training and validation
+- **Mock Data**: 100 synthetic studies for initial pipeline testing (development only)
+- **Transition Protocol**: Explicit development→production phases in each sprint
+
 #### Preprocessing Pipeline
 - **Coordinate Standardization**: tal2icbm transformation with RMSD logging
 - **Directional Deduplication**: Hash-based deduplication preserving statistical contrast direction
@@ -158,7 +164,7 @@ wandb>=0.12.0
 #### Epic 1: Data Curation Pipeline
 - `S1.1.1`: Setup Neurosynth download with NiMARE
 - `S1.1.2`: Implement directional deduplication logic
-- `S1.1.3`: Implement Talairach correction with logging
+- `S1.1.3`: Validate coordinate space (Neurosynth preprocessing verification)
 - `S1.1.4`: Create volumetric cache with dual-kernel augmentation
 - `S1.1.5`: Finalize splits and DVC versioning
 
@@ -175,10 +181,10 @@ wandb>=0.12.0
 ### Sprint 2: Advanced Conditioning & Architecture (3 weeks)
 **Goal**: Upgrade to Conditional β-VAE with FiLM and adversarial de-biasing
 **Key Demo**: "Counterfactual Machine" - Conditional generation dashboard
-**Infrastructure**: Paperspace GPU integration for cloud training
+**Infrastructure**: RunPod GPU platform for cloud training (migrated from Paperspace)
 
-#### Epic 0: Paperspace GPU Setup
-- `S2.0.1`: Setup Paperspace CLI and authentication
+#### Epic 0: RunPod GPU Setup
+- `S2.0.1`: Setup RunPod SDK and authentication
 - `S2.0.2`: Create console-based training orchestration scripts
 - `S2.0.3`: Configure code/environment synchronization
 - `S2.0.4`: Integrate W&B logging with cloud training
@@ -243,6 +249,62 @@ wandb>=0.12.0
 - `S4.4.3`: Publish all artifacts to public repositories
 - `S4.4.4`: Deploy final dashboard with download links
 
+## Data Strategy Addendum
+
+### Overview
+The project implements a **dual-scale data strategy** that balances development velocity with production rigor. Each sprint is divided into explicit **Development** and **Production** phases, using appropriately sized datasets for each purpose.
+
+### Data Scale Definitions
+1. **`neurosynth_subset_1k`**: 1,000 study subset for development, debugging, and rapid iteration
+2. **`neurosynth_full_12k`**: Complete ~12,000 study dataset for production validation and final models
+3. **Mock data**: 100 synthetic studies for initial pipeline development (Sprint 1 only)
+
+### Phase Structure
+Each sprint follows a consistent **Development → Production** progression:
+
+#### Development Phase (Weeks 1-2 of each sprint)
+- **Purpose**: Rapid iteration, debugging, architecture development
+- **Data**: `neurosynth_subset_1k` exclusively
+- **Benefits**: Fast CI/CD cycles (<5 minutes), low compute costs, rapid failure detection
+- **Activities**: New feature implementation, unit testing, integration debugging
+
+#### Production Phase (Final week of each sprint)
+- **Purpose**: Final validation, production-grade model training, demo creation
+- **Data**: `neurosynth_full_12k` exclusively
+- **Benefits**: Scale validation, realistic performance metrics, production artifacts
+- **Activities**: Full-scale training runs, final model checkpoints, demo validation
+
+### Sprint-Specific Data Strategy
+
+#### Sprint 1: Foundation & Baseline
+- **Development (Weeks 1-2)**: Mock data → `neurosynth_subset_1k` transition for pipeline development
+- **Production (Week 3)**: First full-scale training run on `neurosynth_full_12k` for baseline model
+
+#### Sprint 2: Advanced Conditioning
+- **Development (Weeks 4-5)**: All architectural features developed on `neurosynth_subset_1k`
+- **Production (Week 6)**: Definitive C-β-VAE training on `neurosynth_full_12k`
+
+#### Sprint 3: Precision & Uncertainty
+- **Development (Weeks 7-8)**: Parallel streams on subset data (point-cloud and ensemble prototypes)
+- **Production (Week 9)**: Two major production runs (Point-Cloud C-VAE and Deep Ensemble)
+
+#### Sprint 4: Synthesis & Release
+- **Production Exclusivity (Weeks 10-12)**: Subset data officially retired, all activities use full-scale models
+
+### Implementation Requirements
+1. **CI/CD Configuration**: Test pipelines configured for subset data (<5 min runtime)
+2. **Data Pipeline Validation**: Stress-testing at full scale before production use
+3. **Checkpoint Management**: Clear versioning for development vs production models
+4. **Resource Planning**: Cloud GPU allocation aligned with production phase timing
+
+### Quality Assurance
+- **Development Validation**: Functional correctness on subset data
+- **Production Validation**: Scale performance and final quality metrics
+- **Transition Verification**: Pipeline compatibility across data scales
+- **Cost Management**: Subset development minimizes compute costs during iteration
+
+This strategy ensures rapid development cycles while maintaining production quality and provides clear checkpoints for scale validation throughout the project.
+
 ## Progress Tracking & Continuity
 
 ### Critical Requirement: Maintain progress_tracker.md
@@ -289,6 +351,8 @@ This progress tracking system ensures project continuity across context switches
 - **Coordinate Validation**: RMSD ≤4mm post-transformation logging
 - **Version Control**: DVC for full pipeline reproducibility
 - **Quality Checks**: Automated validation of tensor shapes and value ranges
+- **Scale Validation**: Pipeline compatibility testing across subset and full datasets
+- **Data Strategy Compliance**: Strict adherence to development vs production data usage protocols
 
 ### Evaluation Metrics
 - **Generative Quality**: Improved Precision & Recall for Distributions (PRD)

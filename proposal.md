@@ -25,7 +25,12 @@ This document specifies the definitive technical implementation for a deep gener
 
 #### **2. Hardened Data Curation & Preprocessing Pipeline**
 
-Our data pipeline is designed for maximum fidelity and robustness, treating potential sources of error as signals to be modeled or explicitly mitigated.
+Our data pipeline is designed for maximum fidelity and robustness, treating potential sources of error as signals to be modeled or explicitly mitigated. The pipeline implements a **dual-scale data strategy** that balances development velocity with production rigor through explicit development and production phases.
+
+*   **2.0 Multi-Scale Data Strategy:**
+    *   **Development Data Scale:** `neurosynth_subset_1k` (1,000 studies) for rapid iteration, debugging, and architecture development with CI/CD cycles <5 minutes.
+    *   **Production Data Scale:** `neurosynth_full_12k` (~12,000 studies) for final validation, production model training, and scientific analysis.
+    *   **Phase-Gated Implementation:** Each development sprint follows Development (weeks 1-2) → Production (week 3) progression with explicit data scale transitions.
 
 *   **2.1 Coordinate & Volumetric Processing:**
     *   **Scale & Orientation Augmentation:** For the volumetric C-VAE, each study's foci will be convolved with a Gaussian kernel whose FWHM is randomly sampled from {6mm, 12mm}. The kernel's orientation will also be randomly perturbed with anisotropic scaling (±20% along x, y, and z axes) to discourage axis-aligned artifacts and improve model robustness for small, non-spherical structures (e.g., thalamic nuclei, brainstem).
@@ -70,6 +75,7 @@ Our framework leverages a triad of complementary architectures, each hardened wi
 #### **5. Hardened Training & Evaluation Protocol**
 
 ##### **5.1 Training & Monitoring:**
+*   **Scale-Adaptive Training Protocol:** Development phase training uses `neurosynth_subset_1k` for rapid architecture validation and hyperparameter tuning. Production phase training uses `neurosynth_full_12k` for final model checkpoints and evaluation metrics.
 *   **Optimizer:** We will use **AdamW** with `β₂=0.995` for improved stability of the KL divergence term during training.
 *   **Dynamic KL Control:** A controller will monitor the KL divergence. If it falls below 90% of its target value for more than 3 consecutive epochs, the `β` hyperparameter will be automatically increased by 10% to counteract posterior collapse.
 *   **Precision-Aware Training:** The point-cloud VAE, which relies on stable Sinkhorn gradients, will be trained in full FP32 precision. The volumetric VAE will use Automatic Mixed Precision (AMP) to optimize memory and speed.
@@ -86,6 +92,7 @@ Our framework leverages a triad of complementary architectures, each hardened wi
 #### **6. Reproducibility & Stretch Goals**
 
 *   **Full Determinism:** We will set the `TORCH_DETERMINISTIC=1` environment variable and explicitly enable cuDNN's deterministic convolution algorithms to ensure bit-wise reproducibility across hardware.
+*   **Data Strategy Reproducibility:** Both `neurosynth_subset_1k` and `neurosynth_full_12k` datasets will be versioned using DVC with explicit data lineage tracking. Development→production transitions will be logged with data checksums and model performance metrics to ensure reproducible scale validation.
 *   **Stretch Goal: Latent Diffeomorphic Consistency:** As a final, low-cost extension, we will train a small diffeomorphic flow model within the final latent space. This will allow for "semantic editing," ensuring that linear interpolations between two points in the space correspond to smooth, monotonic transformations in the generated brain maps, leading to more compelling and interpretable demonstrations.
 
 ---
