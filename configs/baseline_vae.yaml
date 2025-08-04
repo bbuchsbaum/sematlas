@@ -21,7 +21,7 @@ data:
   train_split: "data/processed/train_split.csv"
   val_split: "data/processed/val_split.csv"
   test_split: "data/processed/test_split.csv"
-  volumetric_cache_path: "data/processed/volumetric_cache"
+  volumetric_cache_path: "data/processed/volumetric_cache_lmdb"
   num_workers: 4
   pin_memory: true
 
