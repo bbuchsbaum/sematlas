@@ -102,11 +102,15 @@ def create_datamodule(config: Dict[str, Any]) -> 'BrainVolumeDataModule':
     training_config = config['training']
     
     return BrainVolumeDataModule(
-        data_dir=str(Path(data_config['train_split']).parent),
-        lmdb_cache=data_config['volumetric_cache_path'],
+        train_split=data_config['train_split'],
+        val_split=data_config['val_split'],
+        test_split=data_config['test_split'],
+        volumetric_cache_path=data_config['volumetric_cache_path'],
         batch_size=training_config['batch_size'],
         num_workers=data_config.get('num_workers', 4),
-        pin_memory=data_config.get('pin_memory', True)
+        pin_memory=data_config.get('pin_memory', True),
+        kernel_selection="random",
+        include_metadata=True
     )
 
 
