@@ -24,16 +24,16 @@ data:
   pin_memory: false
 
 checkpointing:
-  monitor: "val_loss"
+  monitor: "val/total_loss"
   mode: "min"
   save_top_k: 1
   save_last: true
   dirpath: "checkpoints/minimal_validation"
-  filename: "minimal-vae-{epoch:02d}-{val_loss:.3f}"
+  filename: "minimal-vae-{epoch:02d}-{val_total_loss:.3f}"
 
 # No early stopping for minimal run
 # early_stopping:
-#   monitor: "val_loss"
+#   monitor: "val/total_loss"
 #   patience: 5
 #   mode: "min"
 #   min_delta: 0.001

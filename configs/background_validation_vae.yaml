@@ -24,16 +24,16 @@ data:
   pin_memory: false
 
 checkpointing:
-  monitor: "val_loss"
+  monitor: "val/total_loss"
   mode: "min"
   save_top_k: 2
   save_last: true
   dirpath: "checkpoints/validation_background"
-  filename: "vae-{epoch:02d}-{val_loss:.3f}"
+  filename: "vae-{epoch:02d}-{val_total_loss:.3f}"
   save_on_train_epoch_end: true  # Save after each epoch
 
 early_stopping:
-  monitor: "val_loss"
+  monitor: "val/total_loss"
   patience: 5
   mode: "min"
   min_delta: 0.001

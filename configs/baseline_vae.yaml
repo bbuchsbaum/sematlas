@@ -35,15 +35,15 @@ wandb:
   save_dir: "wandb_logs"
 
 checkpointing:
-  monitor: "val_loss"
+  monitor: "val/total_loss"
   mode: "min"
   save_top_k: 3
   save_last: true
   dirpath: "checkpoints"
-  filename: "resnet-vae-{epoch:02d}-{val_loss:.3f}"
+  filename: "resnet-vae-{epoch:02d}-{val_total_loss:.3f}"
 
 early_stopping:
-  monitor: "val_loss"
+  monitor: "val/total_loss"
   patience: 15
   mode: "min"
   min_delta: 0.001

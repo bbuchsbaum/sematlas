@@ -36,15 +36,15 @@ data:
 #   save_dir: "wandb_logs"
 
 checkpointing:
-  monitor: "val_loss"
+  monitor: "val/total_loss"
   mode: "min"
   save_top_k: 1  # Only save best
   save_last: true
   dirpath: "checkpoints"
-  filename: "validation-vae-{epoch:02d}-{val_loss:.3f}"
+  filename: "validation-vae-{epoch:02d}-{val_total_loss:.3f}"
 
 early_stopping:
-  monitor: "val_loss"
+  monitor: "val/total_loss"
   patience: 8  # Reduced patience
   mode: "min"
   min_delta: 0.001
