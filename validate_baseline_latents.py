@@ -50,7 +50,16 @@ def load_model(checkpoint_path: Optional[str] = None) -> ResNetVAE3D:
     if checkpoint_path and Path(checkpoint_path).exists():
         logging.info(f"Loading checkpoint from {checkpoint_path}")
         checkpoint = torch.load(checkpoint_path, map_location='cpu')
-        model.load_state_dict(checkpoint['state_dict'])
+        
+        # Handle both direct model state dict and Lightning module state dict
+        state_dict = checkpoint.get('state_dict', checkpoint)
+        
+        # If keys have 'vae.' prefix (Lightning module), remove it
+        if any(key.startswith('vae.') for key in state_dict.keys()):
+            state_dict = {key.replace('vae.', ''): value for key, value in state_dict.items() if key.startswith('vae.')}
+            logging.info("Detected Lightning checkpoint, removed 'vae.' prefix from keys")
+        
+        model.load_state_dict(state_dict)
         logging.info("Checkpoint loaded successfully")
     else:
         logging.info("Using untrained model for baseline comparison")
